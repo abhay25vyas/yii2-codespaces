@@ -1,20 +1,26 @@
-FROM php:8.1-apache
+FROM php:8.3-fpm
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    unzip \
-    git \
-    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     zip \
-    curl \
-    libonig-dev \
-    libxml2-dev \
-    && docker-php-ext-install zip pdo pdo_mysql
+    git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Set the working directory
+WORKDIR /var/www
 
-WORKDIR /var/www/html
+# Copy the project files into the container
+COPY . .
+
+# Install PHP dependencies via Composer
+RUN composer install
+
+# Expose port
+EXPOSE 80

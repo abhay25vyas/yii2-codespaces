@@ -3,8 +3,8 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "forwardPorts": [80],
-  "postCreateCommand": "composer install && php yii serve --host=0.0.0.0 &",
+  "forwardPorts": [80],  // Forwarding port 80 to access Yii2 app
+  "postCreateCommand": "composer install && php yii serve --host=0.0.0.0 &",  // Run composer install and start the Yii2 app
   "customizations": {
     "vscode": {
       "extensions": [
